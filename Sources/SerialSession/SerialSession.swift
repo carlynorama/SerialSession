@@ -20,7 +20,7 @@ public class SerialSession<Port:SerialPortService> {
     var configuration:SerialPortConfiguration
     
     //TODO: Serial Port Service should be able to provide the port name, right?
-    //TODO: Should maintainConnection be a setting? 
+    //TODO: Should maintainConnection be a setting?
     init(portName:String,
          serialPort:Port,
          maintainConnection:Bool,
@@ -68,6 +68,21 @@ public class SerialSession<Port:SerialPortService> {
         isOpen = false
     }
     
+}
+
+extension SerialSession where Port == SwiftSerial.SerialPort {
+    
+    public convenience init(portName: String, maintainConnection:Bool = true, settings:SerialPortConfiguration = SerialPortConfiguration.defaultSettings) {
+        
+        self.init(portName: portName, serialPort: SerialPort.make(path: portName), maintainConnection: maintainConnection, settings: settings)
+    }
+}
+
+
+
+extension SerialSession {
+    
+    //Main wrapper to provide persistent connection as needed. 
     private func wrappedThrowing<I, R>(function:(I) throws -> R, parameter:I) -> Result<R,Error> {
         defer {
             if !maintainConnection { close() }
@@ -114,10 +129,4 @@ public class SerialSession<Port:SerialPortService> {
 }
 
 
-extension SerialSession where Port == SwiftSerial.SerialPort {
-    
-    public convenience init(portName: String, maintainConnection:Bool = true, settings:SerialPortConfiguration = SerialPortConfiguration.defaultSettings) {
-        
-        self.init(portName: portName, serialPort: SerialPort.make(path: portName), maintainConnection: maintainConnection, settings: settings)
-    }
-}
+
