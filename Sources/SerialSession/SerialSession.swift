@@ -1,9 +1,6 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
-
 //
 //  SerialManager.swift
-//  HelloArduino
+//  SerialSession
 //
 //  Created by Carlyn Maw on 8/24/23.
 //
@@ -22,6 +19,8 @@ public class SerialSession<Port:SerialPortService> {
     var isOpen:Bool = false
     var configuration:SerialPortConfiguration
     
+    //TODO: Serial Port Service should be able to provide the port name, right?
+    //TODO: Should maintainConnection be a setting? 
     init(portName:String,
          serialPort:Port,
          maintainConnection:Bool,

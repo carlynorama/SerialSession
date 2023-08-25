@@ -14,7 +14,6 @@ extension SerialPort:SerialPortService {
     }
     
     public func openPort(with settings: SerialPortConfiguration) throws {
-
         try self.openPort()
         print("Serial port opened successfully.")
         self.setSettings(receiveRate: settings.receiveRate,
