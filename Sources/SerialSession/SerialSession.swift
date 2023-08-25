@@ -8,26 +8,36 @@
 //  Created by Carlyn Maw on 8/24/23.
 //
 
-import Foundation
+//TODO: Replace Error types?
 import SwiftSerial
+import Foundation //For Data type
 
-public class SerialSession {
+public typealias SimpleSerialSession = SerialSession<SerialPort>
+
+public class SerialSession<Port:SerialPortService> {
     let portName:String //not retrievable from SwiftSerial
-    let serialPort: SerialPort
+    let serialPort:Port
     
     let maintainConnection:Bool
     var isOpen:Bool = false
     var configuration:SerialPortConfiguration
     
-    public init(portName: String, maintainConnection:Bool = true, settings:SerialPortConfiguration = SerialPortConfiguration.defaultSettings) {
+    init(portName:String,
+         serialPort:Port,
+         maintainConnection:Bool,
+         settings:SerialPortConfiguration) {
+        
         self.portName = portName
-        self.serialPort = SerialPort(path: portName)
+        self.configuration = settings
+        self.serialPort = serialPort
         self.maintainConnection = maintainConnection
         self.configuration = settings
+        
         if maintainConnection {
             //print("safe open")
             self.safeOpen()
         }
+        
     }
     
     deinit {
@@ -36,10 +46,7 @@ public class SerialSession {
     
     func open() throws {
         print("Attempting to open port: \(portName)")
-        try serialPort.openPort()
-        print("Serial port \(portName) opened successfully.")
-        serialPort.setSettings(receiveRate: .baud9600,
-                               transmitRate: .baud9600, minimumBytesToRead: 1)
+        try serialPort.openPort(with: configuration)
         isOpen = true
     }
     
@@ -104,5 +111,14 @@ public class SerialSession {
     
     public func readLine() -> Result<String, Error>{
         return wrappedThrowing(function: serialPort.readUntilChar, parameter: CChar(10))
+    }
+}
+
+
+extension SerialSession where Port == SwiftSerial.SerialPort {
+    
+    public convenience init(portName: String, maintainConnection:Bool = true, settings:SerialPortConfiguration = SerialPortConfiguration.defaultSettings) {
+        
+        self.init(portName: portName, serialPort: SerialPort.make(path: portName), maintainConnection: maintainConnection, settings: settings)
     }
 }

@@ -13,7 +13,7 @@ public struct SerialPortConfiguration {
     let receiveRate: BaudRate = .baud9600
     let transmitRate: BaudRate = .baud9600
     let minimumBytesToRead: Int = 1
-    let timeout: Int = 0 /* 0 means wait indefinitely */
+    let timeout: Int = 50 /* 0 means wait indefinitely (unit is 0.1 seconds) */
     let parityType: ParityType = .none
     let sendTwoStopBits: Bool = false /* 1 stop bit is the default */
     let dataBitsSize: DataBitsSize = .bits8
