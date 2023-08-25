@@ -19,7 +19,7 @@ extension SerialPort:SerialPortService {
         self.setSettings(receiveRate: settings.receiveRate,
                          transmitRate: settings.transmitRate,
                          minimumBytesToRead: settings.minimumBytesToRead,
-                         timeout: settings.minimumBytesToRead,
+                         timeout: settings.timeout,
                          parityType: settings.parityType,
                          sendTwoStopBits: settings.sendTwoStopBits,
                          dataBitsSize: settings.dataBitsSize,
