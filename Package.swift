@@ -11,11 +11,17 @@ let package = Package(
             name: "SerialSession",
             targets: ["SerialSession"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/yeokm1/swiftserial.git", from: "0.1.2")
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "SerialSession"),
+            name: "SerialSession",
+            dependencies: [
+                .product(name: "SwiftSerial", package: "swiftserial")
+            ]),
         .testTarget(
             name: "SerialSessionTests",
             dependencies: ["SerialSession"]),
