@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "swiftserial",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yeokm1/swiftserial.git",
+      "state" : {
+        "revision" : "0e824cc38c6802e69543d0c1406d34babfd68e2e",
+        "version" : "0.1.2"
+      }
+    }
+  ],
+  "version" : 2
+}
