@@ -12,7 +12,7 @@ let package = Package(
             targets: ["SerialSession"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/yeokm1/swiftserial.git", from: "0.1.2")
+        .package(url: "https://github.com/carlynorama/swiftserial.git", branch: "main")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

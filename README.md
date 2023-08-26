@@ -2,7 +2,7 @@
 
 Library to make simple serial connections via a Session class. Many hobby electronics boards including [Arduino](https://www.arduino.cc) reboot every time a serial connection is opened in order to make loading code onto them easier. This means code that interacts with them needs to avoid reopening the serial ports as much as possible. 
 
-This library currently wraps the [SwiftSerial](https://swiftpackageindex.com/yeokm1/SwiftSerial) library, a Linux and MacOS compatible library with no dependencies.  That may change over time.  I liked it because it uses very standard C commands. Tried to find some useful links about them to put in the resources. 
+This library currently wraps a fork of the [SwiftSerial](https://swiftpackageindex.com/yeokm1/SwiftSerial) library, a Linux and MacOS compatible library with no dependencies.  That may change over time.  I liked it because it uses very standard C commands. Tried to find some useful links about them to put in the resources. 
 
 ## Misc Resources
 
@@ -20,6 +20,13 @@ This library currently wraps the [SwiftSerial](https://swiftpackageindex.com/yeo
 - http://unixwiz.net/techtips/termios-vmin-vtime.html
 - talks about open()/fileDescriptors etc: https://www.youtube.com/watch?v=BQJBe4IbsvQ
 
+### From SwiftSerial
+- https://www.xanthium.in/Serial-Port-Programming-on-Linux
+    - Book rec: [Serial Programming Guide for POSIX Operating Systems by Michael Sweet](https://www.msweet.org/serial/serial.html)
+- https://chrisheydrick.com/2012/06/17/how-to-read-serial-data-from-an-arduino-in-linux-with-c-part-3/
+- Author's talk: https://www.youtube.com/watch?v=6PWP1eZo53s
+
+
 
 ## Example Usage
 
@@ -29,7 +36,7 @@ Find the name of your connected device via `ls /dev/cu.*`
 
 After adding the package as a dependency it can be used directly from a View.
 
-For more see the companion repo: 
+For more see the companion repo: https://github.com/carlynorama/SerialSessionUI
 
 ```swift
 import SwiftUI

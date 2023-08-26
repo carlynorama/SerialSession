@@ -3,10 +3,10 @@
     {
       "identity" : "swiftserial",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/yeokm1/swiftserial.git",
+      "location" : "https://github.com/carlynorama/swiftserial.git",
       "state" : {
-        "revision" : "0e824cc38c6802e69543d0c1406d34babfd68e2e",
-        "version" : "0.1.2"
+        "branch" : "main",
+        "revision" : "792bf00301c29aa7bcff8f43280326499cffa2d4"
       }
     }
   ],
