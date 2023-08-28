@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  Errors.swift
+//  SerialSession
 //
 //  Created by Carlyn Maw on 8/28/23.
 //
