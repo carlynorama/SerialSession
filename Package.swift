@@ -5,6 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "SerialSession",
+    platforms: [
+        .macOS(.v13)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -12,7 +15,7 @@ let package = Package(
             targets: ["SerialSession"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/carlynorama/swiftserial.git", branch: "main")
+        .package(url: "https://github.com/carlynorama/swiftserialport.git", branch: "dev")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -20,7 +23,7 @@ let package = Package(
         .target(
             name: "SerialSession",
             dependencies: [
-                .product(name: "SwiftSerial", package: "swiftserial")
+                .product(name: "SwiftSerialPort", package: "swiftserialport")
             ]),
         .testTarget(
             name: "SerialSessionTests",
