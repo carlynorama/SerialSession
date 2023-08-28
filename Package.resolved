@@ -1,12 +1,12 @@
 {
   "pins" : [
     {
-      "identity" : "swiftserial",
+      "identity" : "swiftserialport",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/yeokm1/swiftserial.git",
+      "location" : "https://github.com/carlynorama/swiftserialport.git",
       "state" : {
-        "revision" : "0e824cc38c6802e69543d0c1406d34babfd68e2e",
-        "version" : "0.1.2"
+        "branch" : "dev",
+        "revision" : "f00b29ccca3a0a6b7383bfe7b9779d517a3f4d96"
       }
     }
   ],

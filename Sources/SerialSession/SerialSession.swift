@@ -6,118 +6,138 @@
 //
 
 //TODO: Replace Error types?
-import SwiftSerial
+import SwiftSerialPort
 import Foundation //For Data type
 
-public typealias SimpleSerialSession = SerialSession<SerialPort>
+public typealias SerialSession = BaseSerialSession<SerialPort>
 
-public class SerialSession<Port:SerialPortService> {
-    let portName:String //not retrievable from SwiftSerial
-    let serialPort:Port
-    
-    let maintainConnection:Bool
-    var isOpen:Bool = false
-    var configuration:SerialPortConfiguration
-    
-    //TODO: Serial Port Service should be able to provide the port name, right?
-    //TODO: Should maintainConnection be a setting? 
-    init(portName:String,
-         serialPort:Port,
-         maintainConnection:Bool,
-         settings:SerialPortConfiguration) {
-        
-        self.portName = portName
+public class BaseSerialSession<Port:SerialPortService> {
+    let devicePath:String
+    var serialPort:Port?
+
+    var configuration:SerialPortConfiguration?
+    var isOpen:Bool {
+        serialPort != nil
+    }
+
+    init(devicePath:String,
+         serialPort:Port?,
+         settings:SerialPortConfiguration?) {
+        self.devicePath = devicePath
         self.configuration = settings
         self.serialPort = serialPort
-        self.maintainConnection = maintainConnection
         self.configuration = settings
-        
-        if maintainConnection {
-            //print("safe open")
-            self.safeOpen()
-        }
-        
     }
     
     deinit {
         close()
     }
     
-    func open() throws {
-        print("Attempting to open port: \(portName)")
-        try serialPort.openPort(with: configuration)
-        isOpen = true
-    }
-    
-    func safeOpen() {
-        do {
-            try open()
-        } catch PortError.failedToOpen {
-            isOpen = false
-            print("Serial port \(portName) failed to open.")
-        } catch {
-            //TODO: divide out PortErrors into connection error and format errors
-            //MUST know for sure if is connected or not.
-            fatalError("Error: \(error)")
+    func open(forcedReset:Bool = false) throws {
+        print("Attempting to open port: \(devicePath)")
+        if forcedReset || !isOpen {
+            serialPort = nil
+            self.serialPort = try Port.make(devicePath: devicePath, with: configuration)
         }
     }
     
     func close() {
-        serialPort.closePort()
+        serialPort = nil //
         print("Port Closed")
-        isOpen = false
     }
     
-    private func wrappedThrowing<I, R>(function:(I) throws -> R, parameter:I) -> Result<R,Error> {
-        defer {
-            if !maintainConnection { close() }
-        }
+}
+
+//MARK: SerialSession inits
+extension BaseSerialSession where Port == SwiftSerialPort.SerialPort {
+    
+    public convenience init(devicePath: String, settings:SerialPortConfiguration? = nil) {
+        
+        var port:Port? = nil
+        
         do {
-            if !isOpen { try open() }
-            let r = try function(parameter)
-            return .success(r)
-
-        } catch PortError.failedToOpen {
-            print("Serial port \(portName) failed to open.")
-            return .failure(PortError.failedToOpen)
+            port = try SerialPort.make(devicePath: devicePath, with: settings)
         } catch {
-            //TODO: divide out PortErrors into connection error and format errors
-            //MUST know for sure if is connected or not.
-            fatalError("Error: \(error)")
+            print("Creating session with nil port: \(error)")
         }
+
+        self.init(devicePath: devicePath, serialPort: port,  settings: settings)
     }
     
+    convenience init(devicePath: String,
+                     baudRate:CInt) {
+       let settings = SerialPortConfiguration(baudRate: baudRate, readEscape: nil)
+        self.init(devicePath:devicePath, settings:settings)
+    }
+}
 
+
+//TODO: re-make wrapped?
+extension BaseSerialSession {
+    
+    //MARK: Transmit
     @discardableResult
     public func pingII() -> Result<Int, Error> {
-        return wrappedThrowing(function: serialPort.writeString, parameter: "A")
-        
+        if let serialPort {
+            do {
+                let bytesWritten = try serialPort.write("A")
+                return .success(bytesWritten)
+            } catch {
+                return .failure(error)
+            }
+        } else {
+            return .failure(SerialSessionError.noActivePort)
+        }
     }
     
     @discardableResult
-    public func sendByte(_ byte:UInt8) -> Result<Int, Error> {
-        return wrappedThrowing(function: writeByteWrapper, parameter: byte)
+    public func send<T>(_ value:T) -> Result<Int, Error> {
+        if let serialPort {
+            do {
+                let bytesWritten = try serialPort.write(value)
+                return .success(bytesWritten)
+            } catch {
+                return .failure(error)
+            }
+        } else {
+            return .failure(SerialSessionError.noActivePort)
+        }
     }
     
-    private func writeByteWrapper(_ byte:UInt8) throws  -> Int {
-        var m_message = byte
-        return try serialPort.writeBytes(from: &m_message, size: 1)
+    //MARK: Receive
+    public func readAvailable() -> Result<Data, Error>{
+        if let serialPort {
+            do {
+                let bytesReceived = try serialPort.readAllAvailable()
+                if bytesReceived.isEmpty {
+                    return .failure(SerialSessionError.noBytesAvailable)
+                }
+                return .success(Data(bytesReceived))
+            } catch {
+                return .failure(error)
+            }
+        } else {
+            return .failure(SerialSessionError.noActivePort)
+        }
     }
     
-    public func readBytes(count:Int) -> Result<Data, Error>{
-        return wrappedThrowing(function: serialPort.readData, parameter: count)
-    }
-    
-    public func readLine() -> Result<String, Error>{
-        return wrappedThrowing(function: serialPort.readUntilChar, parameter: CChar(10))
+    //TODO: Have Session handle remainders as part of AsyncStream iterator.
+    public func readLines() -> Result<(lines:[String], remainder:String), Error>{
+        if let serialPort {
+            do {
+                let dataReceived = try serialPort.readAvailableLines(maxLength: 1000)
+                if dataReceived.lines.isEmpty {
+                    return .failure(SerialSessionError.noBytesAvailable)
+                }
+                return .success(dataReceived)
+            } catch {
+                return .failure(error)
+            }
+        } else {
+            return .failure(SerialSessionError.noActivePort)
+        }
     }
 }
 
 
-extension SerialSession where Port == SwiftSerial.SerialPort {
-    
-    public convenience init(portName: String, maintainConnection:Bool = true, settings:SerialPortConfiguration = SerialPortConfiguration.defaultSettings) {
-        
-        self.init(portName: portName, serialPort: SerialPort.make(path: portName), maintainConnection: maintainConnection, settings: settings)
-    }
-}
+
