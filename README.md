@@ -1,6 +1,6 @@
 # SerialSession
 
-WARNING: very version 0.0.0
+WARNING: works, still very version 0.0.0
 
 Library to make simple serial connections via a Session class. Many hobby electronics boards including [Arduino](https://www.arduino.cc) reboot every time a serial connection is opened in order to make loading code onto them easier. This means code that interacts with them needs to avoid reopening the serial ports as much as possible. 
 
