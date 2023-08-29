@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "swiftserialport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/carlynorama/swiftserialport.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d29cbbddcf32370462b1caa045c17c1414c846ba"
+      }
+    }
+  ],
+  "version" : 2
+}

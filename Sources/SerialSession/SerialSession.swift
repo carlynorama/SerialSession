@@ -1,5 +1,5 @@
 //
-//  SerialManager.swift
+//  SerialSession.swift
 //  SerialSession
 //
 //  Created by Carlyn Maw on 8/24/23.
@@ -37,7 +37,7 @@ public class BaseSerialSession<Port:SerialPortService> {
         print("Attempting to open port: \(devicePath)")
         if forcedReset || !isOpen {
             serialPort = nil
-            self.serialPort = try Port.make(devicePath: devicePath, with: configuration)
+            self.serialPort = try Port.makeForSession(devicePath: devicePath, with: configuration)
         }
     }
     
@@ -56,7 +56,7 @@ extension BaseSerialSession where Port == SwiftSerialPort.SerialPort {
         var port:Port? = nil
         
         do {
-            port = try SerialPort.make(devicePath: devicePath, with: settings)
+            port = try SerialPort.makeForSession(devicePath: devicePath, with: settings)
         } catch {
             print("Creating session with nil port: \(error)")
         }
