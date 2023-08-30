@@ -4,7 +4,7 @@ WARNING: works, still very version 0.0.0
 
 Library to make simple serial connections via a Session class. Many hobby electronics boards including [Arduino](https://www.arduino.cc) reboot every time a serial connection is opened in order to make loading code onto them easier. This means code that interacts with them needs to avoid reopening the serial ports as much as possible. 
 
-This library wraps [SwiftSerialPort](https://swiftpackageindex.com/carlynorama/SwiftSerialPort) library, a Linux (TODO: confirm on Ubuntu) and MacOS (v13) compatible library with no dependencies, and no Foundation.  
+This library wraps [SwiftSerialPort](https://www.github.com/carlynorama/SwiftSerialPort) library, a Linux (TODO: confirm on Ubuntu) and MacOS (v13) compatible library with no dependencies, and no Foundation.  
 
 For usage examples see the companion repo: https://github.com/carlynorama/SerialSessionUI
 
